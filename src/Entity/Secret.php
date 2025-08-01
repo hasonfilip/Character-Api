@@ -21,6 +21,14 @@ class Secret
     #[ORM\JoinColumn(name: 'nemesis_id', referencedColumnName: 'id', nullable: false)]
     private ?Nemesis $nemesis = null;
 
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'secret_code' => $this->getSecretCode(),
+        ];
+    }
+
     public function getId(): ?int
     {
         return $this->id;

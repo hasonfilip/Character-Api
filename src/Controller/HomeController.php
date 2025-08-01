@@ -1,19 +1,22 @@
 <?php
 namespace App\Controller;
 
+use App\Repository\CharacterRepository;
+use App\Service\CharacterService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
     #[Route('/')]
-    public function list(): Response
+    public function getFullCharacterData(CharacterRepository $characterRepository, CharacterService $characterService): JsonResponse
     {
-        $dummy_data = ["name" => "Alice", "age" => 30, "city" => "Paris"];
+        $characters = $characterRepository->findCharactersWithFullNesting();
+        $transformedCharacters = $characterService->transformCharacters($characters);
 
-        return new Response(
-            json_encode($dummy_data)
+        return new JsonResponse(
+            $transformedCharacters
         );
     }
 }

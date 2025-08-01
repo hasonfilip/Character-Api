@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Table(name: 'character')]
+#[ORM\Table(name: '"character"')]
 #[ORM\Entity(repositoryClass: CharacterRepository::class, readOnly: true)]
 class Character
 {
@@ -49,6 +49,25 @@ class Character
     public function __construct()
     {
         $this->nemesises = new ArrayCollection();
+    }
+
+    public function toArray(): array
+    {
+        $nemesisData = array_map(fn($nemesis) => $nemesis->toArray(), $this->getNemesises()->toArray());
+
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'gender' => $this->getGender(),
+            'ability' => $this->getAbility(),
+            'minimal_distance' => $this->getMinimalDistance(),
+            'weight' => $this->getWeight(),
+            'born' => $this->getBorn()?->format('Y-m-d H:i:s'),
+            'in_space_since' => $this->getInSpaceSince()?->format('Y-m-d H:i:s'),
+            'beer_consumption' => $this->getBeerConsumption(),
+            'knows_the_answer' => $this->getKnowsTheAnswer(),
+            'nemesises' => $nemesisData,
+        ];
     }
 
     public function getId(): ?int
