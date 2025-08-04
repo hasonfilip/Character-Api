@@ -2,53 +2,64 @@
 
 namespace App\Service;
 
-use App\Entity\Character;
+use App\Repository\CharacterRepository;
+use DateTimeImmutable;
 
-class CharacterService
+readonly class CharacterService
 {
+    public function __construct(private CharacterRepository $characterRepository)
+    { }
+
     /**
-     * @param Character[] $characters
      * @return array
      */
-    public function transformCharacters(array $characters): array
+    public function getAllCharactersWithRelations(): array
     {
-        $result = [];
-        foreach ($characters as $character) {
-            $characterData = [
-                'id' => $character->getId(),
-                'name' => $character->getName(),
-                'gender' => $character->getGender(),
-                'ability' => $character->getAbility(),
-                'minimal_distance' => $character->getMinimalDistance(),
-                'weight' => $character->getWeight(),
-                'born' => $character->getBorn()?->format('Y-m-d H:i:s'),
-                'in_space_since' => $character->getInSpaceSince()?->format('Y-m-d H:i:s'),
-                'beer_consumption' => $character->getBeerConsumption(),
-                'knows_the_answer' => $character->getKnowsTheAnswer(),
-                'nemesises' => [],
-            ];
+        $characters = $this->characterRepository->findAllWithRelations();
 
-            foreach ($character->getNemesises() as $nemesis) {
-                $nemesisData = [
-                    'id' => $nemesis->getId(),
-                    'is_alive' => $nemesis->isIsAlive(),
-                    'age' => $nemesis->getYears(),
-                    'secrets' => [],
-                ];
+        return array_map(
+            fn($character) => $character->toArray(),
+            $characters
+        );
+    }
 
-                foreach ($nemesis->getSecrets() as $secret) {
-                    $nemesisData['secrets'][] = [
-                        'id' => $secret->getId(),
-                        'secret_code' => $secret->getSecretCode(),
-                    ];
-                }
+    /**
+     * @return float
+     */
+    public function getAverageAge(): float
+    {
+        $birthDates = $this->characterRepository->findAllBirthDates();
 
-                $characterData['nemesises'][] = $nemesisData;
-            }
-
-            $result[] = $characterData;
+        if (empty($birthDates)) {
+            return 0.0;
         }
 
-        return $result;
+        $now = new DateTimeImmutable();
+        $totalAge = 0;
+
+        foreach ($birthDates as $birthDate) {
+            if ($birthDate instanceof DateTimeImmutable) {
+                $age = $now->diff($birthDate)->y;
+                $totalAge += $age;
+            }
+        }
+
+        return $totalAge / count($birthDates);
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalCount(): int
+    {
+        return $this->characterRepository->getCharacterCount();
+    }
+
+    /**
+     * @return float
+     */
+    public function getAverageWeight(): float
+    {
+        return $this->characterRepository->getAverageWeight();
     }
 }

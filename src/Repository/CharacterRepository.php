@@ -16,28 +16,61 @@ class CharacterRepository extends ServiceEntityRepository
         parent::__construct($registry, Character::class);
     }
 
-    //    /**
-    //     * @return Character[] Returns an array of Character objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Get the character count
+     *
+     * @return int
+     */
+    public function getCharacterCount(): int
+    {
+        return $this->count();
+    }
 
-    //    public function findOneBySomeField($value): ?Character
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Get an array of birthdays
+     *
+     * @return array
+     */
+    public function findAllBirthDates(): array
+    {
+        $results = $this->createQueryBuilder('c')
+            ->select('c.born')
+            ->where('c.born IS NOT NULL')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(fn($row) => $row['born'], $results);
+    }
+
+    /**
+     * Get average weight of characters
+     *
+     * @return float
+     */
+    public function getAverageWeight(): float
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('AVG(c.weight)')
+            ->where('c.weight IS NOT NULL');
+
+        $result = $qb->getQuery()->getSingleScalarResult();
+
+        return $result ? (float) $result : 0.0;
+    }
+
+    /**
+     * Find all characters with their related nemeses and secrets
+     *
+     * @return Character[]
+     */
+    public function findAllWithRelations(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.nemeses', 'n')
+            ->leftJoin('n.secrets', 's')
+            ->addSelect('n', 's')
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

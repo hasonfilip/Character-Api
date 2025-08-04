@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CharacterRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -32,10 +33,10 @@ class Character
     private ?string $weight = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private ?\DateTimeImmutable $born = null;
+    private ?DateTimeImmutable $born = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $inSpaceSince = null;
+    private ?DateTimeImmutable $inSpaceSince = null;
 
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $beerConsumption = null;
@@ -43,17 +44,108 @@ class Character
     #[ORM\Column(type: Types::BOOLEAN)]
     private ?bool $knowsTheAnswer = null;
 
-    #[ORM\OneToMany(mappedBy: 'character', targetEntity: Nemesis::class)]
-    private Collection $nemesises;
+    #[ORM\OneToMany(targetEntity: Nemesis::class, mappedBy: 'character')]
+    private Collection $nemeses;
 
     public function __construct()
     {
-        $this->nemesises = new ArrayCollection();
+        $this->nemeses = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAbility(): ?string
+    {
+        return $this->ability;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMinimalDistance(): ?string
+    {
+        return $this->minimalDistance;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getWeight(): ?string
+    {
+        return $this->weight;
+    }
+
+    /**
+     * @return DateTimeImmutable|null
+     */
+    public function getBorn(): ?DateTimeImmutable
+    {
+        return $this->born;
+    }
+
+    /**
+     * @return DateTimeImmutable|null
+     */
+    public function getInSpaceSince(): ?DateTimeImmutable
+    {
+        return $this->inSpaceSince;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getBeerConsumption(): ?int
+    {
+        return $this->beerConsumption;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getKnowsTheAnswer(): ?bool
+    {
+        return $this->knowsTheAnswer;
+    }
+
+    /**
+     * @return Collection<int, Nemesis>
+     */
+    public function getNemeses(): Collection
+    {
+        return $this->nemeses;
+    }
+
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
-        $nemesisData = array_map(fn($nemesis) => $nemesis->toArray(), $this->getNemesises()->toArray());
+        $nemesisData = array_map(fn($nemesis) => $nemesis->toArray(), $this->getNemeses()->toArray());
 
         return [
             'id' => $this->getId(),
@@ -66,65 +158,7 @@ class Character
             'in_space_since' => $this->getInSpaceSince()?->format('Y-m-d H:i:s'),
             'beer_consumption' => $this->getBeerConsumption(),
             'knows_the_answer' => $this->getKnowsTheAnswer(),
-            'nemesises' => $nemesisData,
+            'nemeses' => $nemesisData,
         ];
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function getGender(): ?string
-    {
-        return $this->gender;
-    }
-
-    public function getAbility(): ?string
-    {
-        return $this->ability;
-    }
-
-    public function getMinimalDistance(): ?string
-    {
-        return $this->minimalDistance;
-    }
-
-    public function getWeight(): ?string
-    {
-        return $this->weight;
-    }
-
-    public function getBorn(): ?\DateTimeImmutable
-    {
-        return $this->born;
-    }
-
-    public function getInSpaceSince(): ?\DateTimeImmutable
-    {
-        return $this->inSpaceSince;
-    }
-
-    public function getBeerConsumption(): ?int
-    {
-        return $this->beerConsumption;
-    }
-
-    public function getKnowsTheAnswer(): ?bool
-    {
-        return $this->knowsTheAnswer;
-    }
-
-    /**
-     * @return Collection<int, Nemesis>
-     */
-    public function getNemesises(): Collection
-    {
-        return $this->nemesises;
     }
 }
