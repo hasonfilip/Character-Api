@@ -48,7 +48,7 @@ class TestEntitiesCommand extends Command
 
         // --- TEST 2: Test the One-to-Many relationship (Character -> Nemesis) ---
         $io->section('Test 2: Testing Character to Nemesis relationship (OneToMany)');
-        $nemesises = $character->getNemesises();
+        $nemesises = $character->getNemeses();
 
         if ($nemesises->isEmpty()) {
             $io->warning(sprintf('NOTE: Character "%s" does not have any Nemesises. The relationship mapping might still be correct.', $character->getName()));

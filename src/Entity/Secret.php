@@ -25,6 +25,7 @@ class Secret
     {
         return [
             'id' => $this->getId(),
+            'nemesis_id' => $this->getNemesis()?->getId(),
             'secret_code' => $this->getSecretCode(),
         ];
     }

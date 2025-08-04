@@ -22,11 +22,11 @@ class Nemesis
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $years = null;
 
-    #[ORM\ManyToOne(inversedBy: 'nemesises')]
+    #[ORM\ManyToOne(inversedBy: 'nemeses')]
     #[ORM\JoinColumn(name: 'character_id', referencedColumnName: 'id', nullable: true)]
     private ?Character $character = null;
 
-    #[ORM\OneToMany(mappedBy: 'nemesis', targetEntity: Secret::class)]
+    #[ORM\OneToMany(targetEntity: Secret::class, mappedBy: 'nemesis')]
     private Collection $secrets;
 
     public function __construct()
@@ -40,6 +40,7 @@ class Nemesis
 
         return [
             'id' => $this->getId(),
+            'character_id' => $this->getCharacter()?->getId(),
             'is_alive' => $this->isIsAlive(),
             'years' => $this->getYears(),
             'secrets' => $secretsData,
