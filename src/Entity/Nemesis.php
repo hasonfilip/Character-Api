@@ -34,19 +34,6 @@ class Nemesis
         $this->secrets = new ArrayCollection();
     }
 
-    public function toArray(): array
-    {
-        $secretsData = array_map(fn($secret) => $secret->toArray(), $this->getSecrets()->toArray());
-
-        return [
-            'id' => $this->getId(),
-            'character_id' => $this->getCharacter()?->getId(),
-            'is_alive' => $this->isIsAlive(),
-            'years' => $this->getYears(),
-            'secrets' => $secretsData,
-        ];
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -73,5 +60,18 @@ class Nemesis
     public function getSecrets(): Collection
     {
         return $this->secrets;
+    }
+    
+    public function toArray(): array
+    {
+        $secretsData = array_map(fn($secret) => $secret->toArray(), $this->getSecrets()->toArray());
+
+        return [
+            'id' => $this->getId(),
+            'character_id' => $this->getCharacter()?->getId(),
+            'is_alive' => $this->isIsAlive(),
+            'years' => $this->getYears(),
+            'secrets' => $secretsData,
+        ];
     }
 }
