@@ -48,6 +48,26 @@ readonly class CharacterService
     }
 
     /**
+     * @return array
+     */
+    public function getGenderOverview(): array
+    {
+        $genders = $this->characterRepository->findAllGenders();
+        $overview = [ 'female' => 0, 'male' => 0, 'other' => 0 ];
+        foreach ($genders as $gender) {
+            $genderKey = strtolower($gender ?? 'other');
+            if (in_array($genderKey, ['f', 'female'])) {
+                $overview['female']++;
+            } elseif (in_array($genderKey, ['m', 'male'])) {
+                $overview['male']++;
+            } else {
+                $overview['other']++;
+            }
+        }
+        return $overview;
+    }
+
+    /**
      * @return int
      */
     public function getTotalCount(): int

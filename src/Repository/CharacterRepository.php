@@ -43,6 +43,21 @@ class CharacterRepository extends ServiceEntityRepository
     }
 
     /**
+     * Get an array of genders
+     *
+     * @return array
+     */
+    public function findAllGenders(): array
+    {
+        $results = $this->createQueryBuilder('c')
+            ->select('c.gender')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(fn($row) => $row['gender'], $results);
+    }
+
+    /**
      * Get average weight of characters
      *
      * @return float
