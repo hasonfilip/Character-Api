@@ -38,4 +38,10 @@ Spusťte server:
 symfony server:start
 ```
 
+Nebo
+
+```bash
+php -S 0.0.0.0:8000 -t public
+```
+
 Nebo nakonfigurujte váš webový server dle https://symfony.com/doc/current/setup/web_server_configuration.html
